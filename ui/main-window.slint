@@ -1,8 +1,47 @@
+import { Const } from "constants.slint";
+
+export enum CellState {
+    Unknown,
+    Empty,
+    Filled,
+}
+
 export component MainWindow inherits Window {
-    width: 1000px;
-    height: 600px;
-    
-    Text {
-        text: "Test";
+    in property <int> cols;
+    in property <int> rows;
+    in-out property <[CellState]> cells;
+
+    property <bool> pressed: false;
+
+    width: Const.cell_size * (cols + 2);
+    height: Const.cell_size * (rows + 2);
+
+    // cells
+    for cell[i] in cells: Rectangle {
+        x: Const.cell_size * (mod(i, cols) + 1) + 1px;
+        y: Const.cell_size * (floor(i / cols) + 1) + 1px;
+        width: Const.cell_size;
+        height: Const.cell_size;
+        background: cell == CellState.Filled ? Const.filled_color : Const.empty_color;
+        border-width: 1px;
+        border-color: Const.border_color;
+
+        Path {
+            visible: cell == CellState.Empty;
+            stroke-width: 2px;
+            stroke: Const.filled_color;
+
+            MoveTo { x: 0; y: 0; }
+            LineTo { x: Const.cell_size / 1px; y: Const.cell_size / 1px; }
+            MoveTo { x: Const.cell_size / 1px; y: 0; }
+            LineTo { x: 0; y: Const.cell_size / 1px; }
+        }
+    }
+
+    TouchArea {
+        x: Const.cell_size;
+        y: Const.cell_size;
+        width: Const.cell_size * cols;
+        height: Const.cell_size * rows;
     }
 }
