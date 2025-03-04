@@ -1,47 +1,26 @@
 import { Const } from "constants.slint";
-
-export enum CellState {
-    Unknown,
-    Empty,
-    Filled,
-}
+import { Board, CellState } from "board.slint";
 
 export component MainWindow inherits Window {
     in property <int> cols;
     in property <int> rows;
     in-out property <[CellState]> cells;
+    in property <[[int]]> col_hints;
+    in property <[[int]]> row_hints;
+    in property <int> max_col_hints;
+    in property <int> max_row_hints;
 
-    property <bool> pressed: false;
+    width: board.width + Const.cell_size * 2;
+    height: board.height + Const.cell_size * 2; 
 
-    width: Const.cell_size * (cols + 2);
-    height: Const.cell_size * (rows + 2);
+    board := Board {
+        cols: cols;
+        rows: rows;
+        cells: cells;
+        col_hints: col_hints;
+        row_hints: row_hints;
 
-    // cells
-    for cell[i] in cells: Rectangle {
-        x: Const.cell_size * (mod(i, cols) + 1) + 1px;
-        y: Const.cell_size * (floor(i / cols) + 1) + 1px;
-        width: Const.cell_size;
-        height: Const.cell_size;
-        background: cell == CellState.Filled ? Const.filled_color : Const.empty_color;
-        border-width: 1px;
-        border-color: Const.border_color;
-
-        Path {
-            visible: cell == CellState.Empty;
-            stroke-width: 2px;
-            stroke: Const.filled_color;
-
-            MoveTo { x: 0; y: 0; }
-            LineTo { x: Const.cell_size / 1px; y: Const.cell_size / 1px; }
-            MoveTo { x: Const.cell_size / 1px; y: 0; }
-            LineTo { x: 0; y: Const.cell_size / 1px; }
-        }
-    }
-
-    TouchArea {
         x: Const.cell_size;
         y: Const.cell_size;
-        width: Const.cell_size * cols;
-        height: Const.cell_size * rows;
     }
 }
