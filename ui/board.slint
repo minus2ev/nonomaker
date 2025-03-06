@@ -1,0 +1,90 @@
+import { Const } from "constants.slint";
+
+export enum CellState {
+    Unknown,
+    Empty,
+    Filled,
+}
+
+export component Board {
+    in property <int> cols;
+    in property <int> rows;
+    in-out property <[CellState]> cells;
+
+    private property <CellState> pressed_fill: CellState.Unknown;
+    private property <int> pressed_cell: -1;
+
+    width: Const.cell_size * cols;
+    height: Const.cell_size * rows;
+
+    // cells
+    for cell[i] in cells: Rectangle {
+        x: Const.cell_size * mod(i, cols);
+        y: Const.cell_size * floor(i / cols);
+        width: Const.cell_size;
+        height: Const.cell_size;
+        background: cell == CellState.Filled ? Const.filled_color : Const.empty_color;
+
+        Path {
+            visible: cell == CellState.Empty;
+            stroke-width: 2px;
+            stroke: Const.filled_color;
+
+            MoveTo { x: 0; y: 0; }
+            LineTo { x: Const.cell_size / 1px; y: Const.cell_size / 1px; }
+            MoveTo { x: Const.cell_size / 1px; y: 0; }
+            LineTo { x: 0; y: Const.cell_size / 1px; }
+        }
+    }
+
+    // borders
+    for i in cols + 1: Rectangle {
+        x: Const.cell_size * i;
+        y: 0;
+        width: mod(i, 5) == 0 ? 2px : 1px;
+        height: Const.cell_size * rows;
+        border-color: Const.border_color;
+        border-width: 1px;
+        background: transparent;
+    }
+    for i in rows + 1: Rectangle {
+        x: 0;
+        y: Const.cell_size * i;
+        width: Const.cell_size * cols;
+        height: mod(i, 5) == 0 ? 2px : 1px;
+        border-color: Const.border_color;
+        border-width: 1px;
+        background: transparent;
+    }
+
+    // input
+    TouchArea {
+        function get_cell() -> int {
+            return floor(self.mouse_y / Const.cell_size) * cols + floor(self.mouse_x / Const.cell_size);
+        }
+
+        pointer-event(event) => {
+            if event.kind == PointerEventKind.down {
+                if (event.button == PointerEventButton.left) {
+                    pressed_fill = CellState.Filled;
+                }
+                if (event.button == PointerEventButton.right) {
+                    pressed_fill = CellState.Empty;
+                }
+                pressed_cell = get_cell();
+                cells[pressed_cell] = pressed_fill;
+            }
+            if event.kind == PointerEventKind.up {
+                pressed_fill = CellState.Unknown;
+                pressed_cell = -1;
+            }
+        }
+
+        moved => {
+            if pressed_fill != CellState.Unknown && get_cell() != pressed_cell {
+                pressed_cell = get_cell();
+                cells[pressed_cell] = pressed_fill;
+            }
+        }
+    }
+}

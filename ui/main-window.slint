@@ -1,8 +1,68 @@
+import { Const } from "constants.slint";
+import { Board, CellState } from "board.slint";
+
 export component MainWindow inherits Window {
-    width: 1000px;
-    height: 600px;
-    
-    Text {
-        text: "Test";
+    in property <int> cols;
+    in property <int> rows;
+    in-out property <[CellState]> cells;
+    in property <[[int]]> col_hints;
+    in property <[[int]]> row_hints;
+    in property <int> max_col_hints;
+    in property <int> max_row_hints;
+
+    GridLayout {
+        spacing: 5px;
+        padding: 5px;
+
+        Row {
+            Rectangle {
+                width: Const.cell_size * max_row_hints;
+                height: Const.cell_size * max_col_hints;
+                background: transparent;
+            }
+            HorizontalLayout {
+                for hints in col_hints: VerticalLayout {
+                    alignment: end;
+                    // filler to keep layout for columns with no hints
+                    Rectangle {
+                        width: Const.cell_size;
+                        height: 1px;
+                    }
+                    for hint in hints: Text {
+                        width: Const.cell_size;
+                        height: Const.cell_size;
+                        font-size: 14px;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                        text: hint;
+                    }
+                } 
+            }
+        }
+        Row {
+            VerticalLayout {
+                for hints in row_hints: HorizontalLayout {
+                    alignment: end;
+                    // filler to keep layout for rows with no hints
+                    Rectangle {
+                        width: 1px;
+                        height: Const.cell_size;
+                    }
+                    for hint in hints: Text {
+                        width: Const.cell_size;
+                        height: Const.cell_size;
+                        font-size: 14px;
+                        horizontal-alignment: center;
+                        vertical-alignment: center;
+                        text: hint;
+                    }
+                } 
+            }
+            Board {
+                cols: cols;
+                rows: rows;
+                cells: cells;
+            }
+        }
     }
 }
