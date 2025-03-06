@@ -10,8 +10,6 @@ export component Board {
     in property <int> cols;
     in property <int> rows;
     in-out property <[CellState]> cells;
-    in property <[[int]]> col_hints;
-    in property <[[int]]> row_hints;
 
     private property <CellState> pressed_fill: CellState.Unknown;
     private property <int> pressed_cell: -1;
