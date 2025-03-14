@@ -10,6 +10,8 @@ export component Board {
     in property <int> cols;
     in property <int> rows;
     in-out property <[CellState]> cells;
+    out property <int> c: touch_area.has-hover ? floor(touch_area.mouse_x / Const.cell_size) : -1;
+    out property <int> r: touch_area.has-hover ? floor(touch_area.mouse_y / Const.cell_size) : -1;
 
     private property <CellState> pressed_fill: CellState.Unknown;
     private property <int> pressed_cell: -1;
@@ -58,7 +60,7 @@ export component Board {
     }
 
     // input
-    TouchArea {
+    touch_area := TouchArea {
         function get_cell() -> int {
             return floor(self.mouse_y / Const.cell_size) * cols + floor(self.mouse_x / Const.cell_size);
         }

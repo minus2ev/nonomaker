@@ -35,18 +35,18 @@ impl Nonogram {
         self.row_hints.iter().map(|v| v.len()).max().unwrap_or(0)
     }
 
-    pub fn get_col_hints(&self) -> ModelRc<ModelRc<i32>> {
-        let ch = self.col_hints.clone().into_iter();
-        ModelRc::new(VecModel::from(ch.map(|h| {
+    fn make_2d_model<T: Clone + 'static>(v: Vec<Vec<T>>) -> ModelRc<ModelRc<T>> {
+        ModelRc::new(VecModel::from(v.into_iter().map(|h| {
             ModelRc::new(VecModel::from(h))
         }).collect::<Vec<_>>()))
     }
 
+    pub fn get_col_hints(&self) -> ModelRc<ModelRc<i32>> {
+        Nonogram::make_2d_model(self.col_hints.clone())
+    }
+
     pub fn get_row_hints(&self) -> ModelRc<ModelRc<i32>> {
-        let rh = self.row_hints.clone().into_iter();
-        ModelRc::new(VecModel::from(rh.map(|h| {
-            ModelRc::new(VecModel::from(h))
-        }).collect::<Vec<_>>()))
+        Nonogram::make_2d_model(self.row_hints.clone())
     }
 
     // sample:

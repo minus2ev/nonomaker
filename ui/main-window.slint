@@ -44,7 +44,7 @@ export component MainWindow inherits Window {
                     background: transparent;
                 }
                 HorizontalLayout {
-                    for hints in col_hints: VerticalLayout {
+                    for hints[c] in col_hints: VerticalLayout {
                         alignment: end;
                         // filler to keep layout for columns with no hints
                         Rectangle {
@@ -58,13 +58,14 @@ export component MainWindow inherits Window {
                             horizontal-alignment: center;
                             vertical-alignment: center;
                             text: hint;
+                            color: c == board.c ? Const.highlight_color : Const.empty_color;
                         }
                     } 
                 }
             }
             Row {
                 VerticalLayout {
-                    for hints in row_hints: HorizontalLayout {
+                    for hints[r] in row_hints: HorizontalLayout {
                         alignment: end;
                         // filler to keep layout for rows with no hints
                         Rectangle {
@@ -78,10 +79,11 @@ export component MainWindow inherits Window {
                             horizontal-alignment: center;
                             vertical-alignment: center;
                             text: hint;
+                            color: r == board.r ? Const.highlight_color : Const.empty_color;
                         }
                     } 
                 }
-                Board {
+                board := Board {
                     cols: cols;
                     rows: rows;
                     cells: cells;
