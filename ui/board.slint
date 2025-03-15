@@ -67,13 +67,13 @@ export component Board {
 
         pointer-event(event) => {
             if event.kind == PointerEventKind.down {
+                pressed_cell = get_cell();
                 if (event.button == PointerEventButton.left) {
-                    pressed_fill = CellState.Filled;
+                    pressed_fill = cells[pressed_cell] == CellState.Filled ? CellState.Unknown : CellState.Filled;
                 }
                 if (event.button == PointerEventButton.right) {
-                    pressed_fill = CellState.Empty;
+                    pressed_fill = cells[pressed_cell] == CellState.Empty ? CellState.Unknown : CellState.Empty;
                 }
-                pressed_cell = get_cell();
                 cells[pressed_cell] = pressed_fill;
             }
             if event.kind == PointerEventKind.up {
@@ -83,7 +83,7 @@ export component Board {
         }
 
         moved => {
-            if pressed_fill != CellState.Unknown && get_cell() != pressed_cell {
+            if pressed_cell != -1 && get_cell() != pressed_cell {
                 pressed_cell = get_cell();
                 cells[pressed_cell] = pressed_fill;
             }
